@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Table, ForeignKey, Enum
-from sqlalchemy.sql.sqltypes import Integer, String, Float
+from sqlalchemy.sql.sqltypes import Integer, Float
 from config.db import meta, engine
+from .MarcaCoche import MarcaCoche
+from .ModeloCoche import ModeloCoche
 from enum import Enum as PythonEnum
 
 class CajaCambiosEnum(PythonEnum):

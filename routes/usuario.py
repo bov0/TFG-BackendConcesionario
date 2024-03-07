@@ -48,7 +48,10 @@ def create_usuario(usuario_data: UsuarioBase):
     nuevoUsuario["id"] = result.lastrowid
     return nuevoUsuario
 
-@usuario.put("/usuarios/{id}", response_model=UsuarioBase, description="Modificar usuario por ID")
+@usuario.put("/usuarios/{id}",
+             response_model=UsuarioBase,
+            tags=["usuarios"],
+             description="Modificar usuario por ID")
 def update_usuario(usuario_data: UsuarioBase, id: int):
 
     # Verificar si el usuario con el ID proporcionado existe

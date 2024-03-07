@@ -50,7 +50,8 @@ def create_marca_coche(marcaCoche_data: MarcaCocheBase):
 @marcaCoche.put(
     "/marcas-coche/{id}",
     response_model=MarcaCocheBase,
-    description="Modificar marca de coche por ID"
+    description="Modificar marca de coche por ID",
+    tags=["marcas-coche"]
 )
 def update_marca_coche(marca_coche_data: MarcaCocheBase, id: int):
     # Verificar si la marca de coche con el ID proporcionado existe

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException  
+from fastapi import APIRouter, HTTPException, Form  
 from config.db import conn
 from models.Coche import Coche
 from models.MarcaCoche import MarcaCoche
@@ -27,38 +27,59 @@ def get_coche(id: int):
     
     return coche_resultado
 
-@coche.post("/", tags=["coches"], response_model=CocheBase, description="Crear un nuevo coche")
-async def create_coche(coche_data: CocheBase):
-
-    marca_resultado = conn.execute(select(MarcaCoche).where(MarcaCoche.c.id == coche_data.marca_id)).first()
+@coche.post("/coches", tags=["coches"], response_model=CocheBase, description="Crear un nuevo coche")
+async def create_coche(
+    marca_id: int = Form(..., title="ID de la Marca", description="ID de la marca del coche"),
+    modelo: str = Form(..., title="Modelo", description="Modelo del coche"),
+    precio: float = Form(..., title="Precio", description="Precio del coche"),
+    km: int = Form(..., title="Kilómetros", description="Kilómetros recorridos por el coche"),
+    anio: int = Form(..., title="Año", description="Año de fabricación del coche"),
+    cajaCambios: str = Form(..., title="Caja de Cambios", description="Tipo de caja de cambios del coche"),
+    combustible: str = Form(..., title="Combustible", description="Tipo de combustible del coche"),
+    distAmbiental: str = Form(..., title="Distancia Ambiental", description="Clasificación de la distancia ambiental del coche"),
+    cilindrada: int = Form(..., title="Cilindrada", description="Cilindrada del coche"),
+    tipCarr: str = Form(..., title="Tipo de Carrocería", description="Tipo de carrocería del coche"),
+    color: str = Form(..., title="Color", description="Color del coche")
+):
+    marca_resultado = conn.execute(select(MarcaCoche).where(MarcaCoche.c.id == marca_id)).first()
 
     if marca_resultado is None:
         raise HTTPException(status_code=404, detail="No existe ninguna marca de coche con el ID proporcionado")
     
     new_coche = {
-        "marca_id": coche_data.marca_id,
-        "modelo": coche_data.modelo,
-        "precio": coche_data.precio,
-        "km": coche_data.km,
-        "anio": coche_data.anio,
-        "cajaCambios": coche_data.cajaCambios,
-        "combustible": coche_data.combustible,
-        "distAmbiental": coche_data.distAmbiental,
-        "cilindrada": coche_data.cilindrada,
-        "tipCarr": coche_data.tipCarr,
-        "color": coche_data.color
+        "marca_id": marca_id,
+        "modelo": modelo,
+        "precio": precio,
+        "km": km,
+        "anio": anio,
+        "cajaCambios": cajaCambios,
+        "combustible": combustible,
+        "distAmbiental": distAmbiental,
+        "cilindrada": cilindrada,
+        "tipCarr": tipCarr,
+        "color": color
     }
 
     result = conn.execute(Coche.insert().values(new_coche))
     new_coche["id"] = result.lastrowid
     return new_coche
 
-@coche.put(
-    "/coches/{id}", tags=["coches"], response_model=CocheBase, description="Modificar coche por ID"
-)
-def update_coche(coche_data: CocheBase, id: int):
-
-    marca_resultado = conn.execute(select(MarcaCoche).where(MarcaCoche.c.id == coche_data.marca_id)).first()
+@coche.put("/coches/{id}", tags=["coches"], response_model=CocheBase, description="Modificar coche por ID")
+async def update_coche(
+    id: int,
+    marca_id: int = Form(..., title="ID de la Marca", description="ID de la marca del coche"),
+    modelo: str = Form(..., title="Modelo", description="Modelo del coche"),
+    precio: float = Form(..., title="Precio", description="Precio del coche"),
+    km: int = Form(..., title="Kilómetros", description="Kilómetros recorridos por el coche"),
+    anio: int = Form(..., title="Año", description="Año de fabricación del coche"),
+    cajaCambios: str = Form(..., title="Caja de Cambios", description="Tipo de caja de cambios del coche"),
+    combustible: str = Form(..., title="Combustible", description="Tipo de combustible del coche"),
+    distAmbiental: str = Form(..., title="Distancia Ambiental", description="Clasificación de la distancia ambiental del coche"),
+    cilindrada: int = Form(..., title="Cilindrada", description="Cilindrada del coche"),
+    tipCarr: str = Form(..., title="Tipo de Carrocería", description="Tipo de carrocería del coche"),
+    color: str = Form(..., title="Color", description="Color del coche")
+):
+    marca_resultado = conn.execute(select(MarcaCoche).where(MarcaCoche.c.id == marca_id)).first()
     
     if marca_resultado is None:
         raise HTTPException(status_code=404, detail="No existe ninguna marca de coche con el ID proporcionado")
@@ -66,23 +87,23 @@ def update_coche(coche_data: CocheBase, id: int):
     conn.execute(
         Coche.update()
         .values(
-            marca_id=coche_data.marca_id,
-            modelo=coche_data.modelo,
-            precio=coche_data.precio,
-            km=coche_data.km,
-            anio=coche_data.anio,
-            cajaCambios=coche_data.cajaCambios,
-            combustible=coche_data.combustible,
-            distAmbiental=coche_data.distAmbiental,
-            cilindrada=coche_data.cilindrada,
-            tipCarr=coche_data.tipCarr,
-            color=coche_data.color
+            marca_id=marca_id,
+            modelo=modelo,
+            precio=precio,
+            km=km,
+            anio=anio,
+            cajaCambios=cajaCambios,
+            combustible=combustible,
+            distAmbiental=distAmbiental,
+            cilindrada=cilindrada,
+            tipCarr=tipCarr,
+            color=color
         )
         .where(Coche.c.id == id)
     )
     return conn.execute(select(Coche).where(Coche.c.id == id)).first()
 
-@coche.delete("/{id}", tags=["coches"], status_code=HTTP_204_NO_CONTENT)
+@coche.delete("/coches/{id}", tags=["coches"], status_code=HTTP_204_NO_CONTENT)
 def delete_coche(id: int):
     conn.execute(Coche.delete().where(Coche.c.id == id))
     return conn.execute(select(Coche).where(Coche.c.id == id)).first()

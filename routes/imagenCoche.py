@@ -46,6 +46,7 @@ def create_imagenCoche(imagen_coche_data: ImagenCocheBase):
 @imagenCoche.put(
     "/imagenes-coche/{id}",
     response_model=ImagenCocheBase,
+    tags=["imagenes-coche"],
     description="Modificar imagen de coche por ID"
 )
 def update_imagen_coche(imagen_coche_data: ImagenCocheBase, id: int):
