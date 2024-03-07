@@ -102,4 +102,4 @@ async def update_modelo(
 )
 def delete_modelo(id:int):
     conn.execute(ModeloCoche.delete().where(ModeloCoche.c.id == id))
-    return "Modelo eliminado"
+    return {"mensaje": "Modelo eliminado"}

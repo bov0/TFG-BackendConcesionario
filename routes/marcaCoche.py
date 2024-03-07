@@ -3,6 +3,8 @@ from sqlalchemy import select
 from models.MarcaCoche import MarcaCoche
 from schemas.MarcaCoche import MarcaCocheBase
 from config.db import conn
+from starlette.status import HTTP_204_NO_CONTENT
+
 
 marcaCoche = APIRouter()
 
@@ -93,10 +95,10 @@ def update_marca_coche(
 
 @marcaCoche.delete(
     "/marcas-coche/{id}",
-    response_model=MarcaCocheBase,
     tags=["marcas-coche"],
+    status_code=HTTP_204_NO_CONTENT,
     description="Eliminar una marca de coche por ID"
 )
 def delete_marca_coche(id: int):
     marcaEliminada = conn.execute(MarcaCoche.delete().where(MarcaCoche.c.id == id))
-    return {"mensaje": "Marca eliminada"}
+    return {"mensaje": "Usuario eliminado"}

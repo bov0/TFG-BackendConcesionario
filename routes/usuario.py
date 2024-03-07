@@ -1,8 +1,11 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, Form
 from sqlalchemy import select
-from models import Usuario
+from models.Usuario import Usuario
 from schemas.Usuario import UsuarioBase
 from config.db import conn
+from starlette.status import HTTP_204_NO_CONTENT
+
+from werkzeug.utils import secure_filename
 
 usuario = APIRouter()
 
@@ -20,33 +23,45 @@ def get_usuarios():
             tags=["usuarios"],
             description="Ver usuario por ID único")
 def get_usuario(id : int):
-    usuario = conn.execute(select(UsuarioBase).where(UsuarioBase.id == id)).first()
+    usuario = conn.execute(select(Usuario).where(Usuario.c.id == id)).first()
     if usuario is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario
 
 @usuario.post(
-        "/",
-        response_model=UsuarioBase,
-        status_code=201,
-        tags=["usuarios"],
-        description="Crear un nuevo usuario")
-def create_usuario(usuario_data: UsuarioBase):
+    "/usuarios",
+    response_model=UsuarioBase,
+    status_code=201,
+    tags=["usuarios"],
+    description="Crear un nuevo usuario")
+def create_usuario(
+    nombre: str = Form(..., title="Nombre", description="Nombre del usuario"),
+    apellidos: str = Form(..., title="Apellidos", description="Apellidos del usuario"),
+    Email: str = Form(..., title="Email", description="Email del usuario"),
+    fotoPerfil: UploadFile = Form(..., title="Foto", description="Foto del usuario")
+):
     # Verificar si ya existe un usuario con el mismo email
-    usuarioExistente = conn.execute(select(UsuarioBase).where(UsuarioBase.email == usuario_data.email)).first()
-    if usuarioExistente:
+    usuario_existente = conn.execute(select(Usuario).where(Usuario.c.email == email)).first()
+    if usuario_existente:
         raise HTTPException(status_code=400, detail="Ya existe un usuario con este email")
+    
+    # Verificar si se proporcionó un archivo
+    #if not fotoPerfil.filename:
+        #raise HTTPException(status_code=422, detail="No se proporcionó una imagen")
+
+    foto_perfil_blob = fotoPerfil.read()
 
     nuevoUsuario = {
-        "nombre": usuario_data.nombre,
-        "apellidos": usuario_data.apellidos,
-        "email": usuario_data.email,
-        "fotoPerfil": usuario_data.fotoPerfil
+        "nombre": nombre,
+        "apellidos": apellidos,
+        "Email": Email,
+        "fotoPerfil": foto_perfil_blob
     }
 
     result = conn.execute(UsuarioBase.insert().values(nuevoUsuario))
     nuevoUsuario["id"] = result.lastrowid
     return nuevoUsuario
+
 
 @usuario.put("/usuarios/{id}",
              response_model=UsuarioBase,
@@ -73,9 +88,14 @@ def update_usuario(usuario_data: UsuarioBase, id: int):
     return conn.execute(select(UsuarioBase).where(UsuarioBase.c.id == id)).first()
 
 @usuario.delete("/usuarios/{id}",
-               response_model=UsuarioBase,
                tags=["usuarios"],
+               status_code=HTTP_204_NO_CONTENT,
                description="Eliminar un usuario por ID")
 def delete_usuario(id: int):
-    usuarioEliminado = conn.execute(UsuarioBase.delete().where(UsuarioBase.id == id)).first()
-    return usuarioEliminado
+    delete_resultado = conn.execute(select(Usuario).where(Usuario.c.id == id)).first()
+    
+    if delete_resultado is None:
+        raise HTTPException(status_code=404, detail="No existe ningun ususario con el ID proporcionado")
+    
+    usuarioEliminado = conn.execute(Usuario.delete().where(Usuario.c.id == id)).first()
+    return {"mensaje": "Marca eliminada"}
