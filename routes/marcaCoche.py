@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
+from models.MarcaCoche import MarcaCoche
 from schemas.MarcaCoche import MarcaCocheBase
 from config.db import conn
 
@@ -12,7 +13,7 @@ marcaCoche = APIRouter()
     description="Lista de todas las marcas de coche"
 )
 def get_marcas_coche():
-    return conn.execute(select(MarcaCocheBase)).fetchall()
+    return conn.execute(select(MarcaCoche)).fetchall()
 
 @marcaCoche.get(
     "/marcas-coche/{id}",
@@ -21,7 +22,7 @@ def get_marcas_coche():
     description="Ver marca de coche por ID único"
 )
 def get_marca_coche(id: int):
-    marca_coche = conn.execute(select(MarcaCocheBase).where(MarcaCocheBase.c.id == id)).first()
+    marca_coche = conn.execute(select(MarcaCoche).where(MarcaCoche.c.id == id)).first()
     if marca_coche is None:
         raise HTTPException(status_code=404, detail="Marca de coche no encontrada")
     return marca_coche
