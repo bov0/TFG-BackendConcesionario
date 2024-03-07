@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Form
 from sqlalchemy import select
 from models.MarcaCoche import MarcaCoche
 from schemas.MarcaCoche import MarcaCocheBase
@@ -34,17 +34,34 @@ def get_marca_coche(id: int):
     tags=["marcas-coche"],
     description="Crear una nueva marca de coche"
 )
-def create_marca_coche(marcaCoche_data: MarcaCocheBase):
+
+#def create_marca_coche(marcaCoche_data: MarcaCocheBase):
     # Verificar si ya existe una marca de coche con el mismo nombre
-    marca_existente = conn.execute(select(MarcaCocheBase).where(MarcaCocheBase.nombreMarca == marcaCoche_data.nombreMarca)).first()
+    #marca_existente = conn.execute(select(MarcaCocheBase).where(MarcaCocheBase.nombreMarca == marcaCoche_data.nombreMarca)).first()
+    #if marca_existente:
+        #raise HTTPException(status_code=400, detail="Ya existe una marca de coche con este nombre")
+
+    #nuevaMarcaCoche = {
+       # "nombreMarca": marcaCoche_data.nombreMarca
+    #}
+
+    #result = conn.execute(MarcaCocheBase.insert().values(nuevaMarcaCoche))
+    #nuevaMarcaCoche["id"] = result.lastrowid
+    #return nuevaMarcaCoche
+def create_marca_coche(
+    nombreMarca: str = Form(..., tittle="Nombre", description="Nombre de la marca")
+):
+    # Verificar si ya existe una marca de coche con el mismo nombre
+    marca_existente = conn.execute(select(MarcaCoche).where(MarcaCoche.c.nombreMarca == nombreMarca)).first()
+
     if marca_existente:
         raise HTTPException(status_code=400, detail="Ya existe una marca de coche con este nombre")
 
     nuevaMarcaCoche = {
-        "nombreMarca": marcaCoche_data.nombreMarca
+        "nombreMarca": nombreMarca
     }
 
-    result = conn.execute(MarcaCocheBase.insert().values(nuevaMarcaCoche))
+    result = conn.execute(MarcaCoche.insert().values(nuevaMarcaCoche))
     nuevaMarcaCoche["id"] = result.lastrowid
     return nuevaMarcaCoche
 
@@ -54,21 +71,25 @@ def create_marca_coche(marcaCoche_data: MarcaCocheBase):
     description="Modificar marca de coche por ID",
     tags=["marcas-coche"]
 )
-def update_marca_coche(marca_coche_data: MarcaCocheBase, id: int):
+def update_marca_coche(
+    id: int,
+    nombreMarca: str = Form(..., tittle="Nombre", description="Nombre de la marca")
+):
     # Verificar si la marca de coche con el ID proporcionado existe
-    marca_coche_existente = conn.execute(select(MarcaCocheBase).where(MarcaCocheBase.c.id == id)).first()
-    if marca_coche_existente is None:
+    marca_existente = conn.execute(select(MarcaCoche).where(MarcaCoche.c.id == id)).first()
+
+    if marca_existente is None:
         raise HTTPException(status_code=404, detail="No existe ninguna marca de coche con el ID proporcionado")
 
     conn.execute(
-        MarcaCocheBase.update()
+        MarcaCoche.update()
         .values(
-            nombreMarca=marca_coche_data.nombreMarca
+            nombreMarca=nombreMarca
         )
-        .where(MarcaCocheBase.c.id == id)
+        .where(MarcaCoche.c.id == id)
     )
 
-    return conn.execute(select(MarcaCocheBase).where(MarcaCocheBase.c.id == id)).first()
+    return conn.execute(select(MarcaCoche).where(MarcaCoche.c.id == id)).first()
 
 @marcaCoche.delete(
     "/marcas-coche/{id}",
@@ -77,5 +98,5 @@ def update_marca_coche(marca_coche_data: MarcaCocheBase, id: int):
     description="Eliminar una marca de coche por ID"
 )
 def delete_marca_coche(id: int):
-    marcaEliminada = conn.execute(MarcaCocheBase.delete().where(MarcaCocheBase.c.id == id)).first()
-    return marcaEliminada
+    marcaEliminada = conn.execute(MarcaCoche.delete().where(MarcaCoche.c.id == id))
+    return {"mensaje": "Marca eliminada"}

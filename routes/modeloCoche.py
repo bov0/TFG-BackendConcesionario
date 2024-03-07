@@ -25,7 +25,7 @@ def get_all():
     description="Lista de todos los modelos por marca de coche",
 )
 def get_modeloByMarca(id: int):
-    modelo_resultado = conn.execute(select(ModeloCoche).where(ModeloCoche.c.marca_id == id)).first()
+    modelo_resultado = conn.execute(select(ModeloCoche).where(ModeloCoche.c.marca_id == id)).fetchall()
 
     if modelo_resultado is None:
         raise HTTPException(status_code=404, detail="No se encontró ningún modello con el ID de la marca proporcionado")
@@ -35,14 +35,14 @@ def get_modeloByMarca(id: int):
 @modeloCoche.get(
     "/modelos/{id}",
     tags=["modelos"],
-    response_model=List[ModeloCocheBase],
+    response_model=ModeloCocheBase,
     description="Lista de todos los modelos por Id único",
 )
 def get_modeloById(id: int):
     modelo_resultado = conn.execute(select(ModeloCoche).where(ModeloCoche.c.id == id)).first()
 
     if modelo_resultado is None:
-        raise HTTPException(status_code=404, detail="No se encontró ningún modello con el ID de la marca proporcionado")
+        raise HTTPException(status_code=404, detail="No se encontró ningún modello con el ID del modelo proporcionado")
     
     return modelo_resultado
 
