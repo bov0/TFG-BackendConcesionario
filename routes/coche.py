@@ -16,7 +16,7 @@ coche = APIRouter()
     response_model=List[CocheBase],
     description="Lista de todos los coches",
 )
-def get_coches():
+async def get_coches():
     return conn.execute(select(Coche)).fetchall()
 
 @coche.get("/coches/{id}", tags=["coches"], response_model=CocheBase, description="Ver coche por ID único")
