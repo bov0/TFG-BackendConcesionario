@@ -8,7 +8,7 @@ Usuario = Table('Usuario',
     Column('nombre',String(255), nullable=False),
     Column('apellidos',String(255), nullable=False),
     Column('Email',String(255), nullable=False),
-    Column('fotoPerfil',BLOB, nullable=True),
+    Column('fotoPerfil',BLOB, nullable=False),
     )
 
 meta.create_all(bind=engine,tables=[Usuario])

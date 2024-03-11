@@ -10,12 +10,15 @@ from werkzeug.utils import secure_filename
 usuario = APIRouter()
 
 @usuario.get(
-        "/usuarios",
-         tags=["usuarios"],
-         response_model=list[UsuarioBase],
-         description="Lista de todos los usuarios")
+    "/usuarios",
+    tags=["usuarios"],
+    response_model=list[UsuarioBase],
+    description="Lista de todos los usuarios"
+)
 def get_usuarios():
     return conn.execute(select(Usuario)).fetchall()
+    
+
 
 @usuario.get(
             "/usuarios/{id}",
@@ -41,7 +44,7 @@ async def create_usuario(
 ):
     # Verificar si ya existe un usuario con el mismo email
     usuario_existente = conn.execute(select(Usuario).where(Usuario.c.id == id)).first()
-    if usuario_existente is None:
+    if usuario_existente is not None:
         raise HTTPException(status_code=400, detail="Ya existe un usuario con este email")
 
     foto_perfil_blob = None
