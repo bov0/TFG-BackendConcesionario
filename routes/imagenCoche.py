@@ -106,12 +106,12 @@ async def delete_imagenCoche(id: int):
     "/imagenes-coche/imagen/{id}",
     response_model=ImagenCocheBase,
     tags=["imagenes-coche"],
-    description="Ver una imagen de coche por ID"
+    description="Ver una imagen de coche por ID del coche"
 )
 async def ver_imagenCoche(id: int):
     try:
         # Obtén la imagen de la base de datos por ID
-        imagen_coche = conn.execute(select(ImagenCoche).where(ImagenCoche.c.id == id)).first()
+        imagen_coche = conn.execute(select(ImagenCoche).where(ImagenCoche.c.coche_id == id)).first()
 
         if not imagen_coche:
             raise HTTPException(status_code=404, detail="Imagen de coche no encontrada")
