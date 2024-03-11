@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, Union
+from typing import Optional
 import base64
 
 class UsuarioBase(BaseModel):

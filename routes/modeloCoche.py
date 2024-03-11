@@ -15,7 +15,7 @@ modeloCoche = APIRouter()
     response_model=List[ModeloCocheBase],
     description="Lista de todos los modelos",
 )
-def get_all():
+async def get_all():
     return conn.execute(select(ModeloCoche)).fetchall()
 
 @modeloCoche.get(
@@ -24,7 +24,7 @@ def get_all():
     response_model=List[ModeloCocheBase],
     description="Lista de todos los modelos por marca de coche",
 )
-def get_modeloByMarca(id: int):
+async def get_modeloByMarca(id: int):
     modelo_resultado = conn.execute(select(ModeloCoche).where(ModeloCoche.c.marca_id == id)).fetchall()
 
     if modelo_resultado is None:
@@ -38,7 +38,7 @@ def get_modeloByMarca(id: int):
     response_model=ModeloCocheBase,
     description="Lista de todos los modelos por Id único",
 )
-def get_modeloById(id: int):
+async def get_modeloById(id: int):
     modelo_resultado = conn.execute(select(ModeloCoche).where(ModeloCoche.c.id == id)).first()
 
     if modelo_resultado is None:
@@ -100,6 +100,6 @@ async def update_modelo(
     status_code=HTTP_204_NO_CONTENT,
     description="Elimina un modelo dado un Id",
 )
-def delete_modelo(id:int):
+async def delete_modelo(id:int):
     conn.execute(ModeloCoche.delete().where(ModeloCoche.c.id == id))
     return {"mensaje": "Modelo eliminado"}

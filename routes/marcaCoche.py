@@ -14,7 +14,7 @@ marcaCoche = APIRouter()
     response_model=list[MarcaCocheBase],
     description="Lista de todas las marcas de coche"
 )
-def get_marcas_coche():
+async def get_marcas_coche():
     return conn.execute(select(MarcaCoche)).fetchall()
 
 @marcaCoche.get(
@@ -23,7 +23,7 @@ def get_marcas_coche():
     tags=["marcas-coche"],
     description="Ver marca de coche por ID único"
 )
-def get_marca_coche(id: int):
+async def get_marca_coche(id: int):
     marca_coche = conn.execute(select(MarcaCoche).where(MarcaCoche.c.id == id)).first()
     if marca_coche is None:
         raise HTTPException(status_code=404, detail="Marca de coche no encontrada")
@@ -50,7 +50,7 @@ def get_marca_coche(id: int):
     #result = conn.execute(MarcaCocheBase.insert().values(nuevaMarcaCoche))
     #nuevaMarcaCoche["id"] = result.lastrowid
     #return nuevaMarcaCoche
-def create_marca_coche(
+async def create_marca_coche(
     nombreMarca: str = Form(..., tittle="Nombre", description="Nombre de la marca")
 ):
     # Verificar si ya existe una marca de coche con el mismo nombre
@@ -73,7 +73,7 @@ def create_marca_coche(
     description="Modificar marca de coche por ID",
     tags=["marcas-coche"]
 )
-def update_marca_coche(
+async def update_marca_coche(
     id: int,
     nombreMarca: str = Form(..., tittle="Nombre", description="Nombre de la marca")
 ):
@@ -99,6 +99,6 @@ def update_marca_coche(
     status_code=HTTP_204_NO_CONTENT,
     description="Eliminar una marca de coche por ID"
 )
-def delete_marca_coche(id: int):
+async def delete_marca_coche(id: int):
     marcaEliminada = conn.execute(MarcaCoche.delete().where(MarcaCoche.c.id == id))
     return {"mensaje": "Usuario eliminado"}

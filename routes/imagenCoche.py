@@ -1,10 +1,11 @@
 from fastapi import APIRouter, HTTPException, Form, UploadFile
+from fastapi.responses import StreamingResponse
 from sqlalchemy import select
 from schemas.ImagenCoche import ImagenCocheBase
-from schemas.Coche import CocheBase
 from models.ImagenCoche import ImagenCoche
 from models.Coche import Coche
 from config.db import conn
+import io
 
 imagenCoche = APIRouter()
 
@@ -14,7 +15,7 @@ imagenCoche = APIRouter()
     response_model=list[ImagenCocheBase],
     description="Lista de todas las imágenes de coche"
 )
-def get_imagenes_coche():
+async def get_imagenes_coche():
     return conn.execute(select(ImagenCoche)).fetchall()
 
 @imagenCoche.get(
@@ -23,7 +24,7 @@ def get_imagenes_coche():
     tags=["imagenes-coche"],
     description="Ver imagen de coche por ID único"
 )
-def get_imagen_coche(id: int):
+async def get_imagen_coche(id: int):
     imagenCoche = conn.execute(select(ImagenCoche).where(ImagenCoche.c.id == id)).first()
     if imagenCoche is None:
         raise HTTPException(status_code=404, detail="Imagen de coche no encontrada")
@@ -52,7 +53,7 @@ async def create_imagenCoche(
 
         result = conn.execute(ImagenCoche.insert().values(nueva_imagen))
         nueva_imagen["id"] = result.lastrowid
-        return f"Imagen con id {nueva_imagen} añadida"
+        return nueva_imagen
     else:
         raise HTTPException(status_code=400, detail="No existe un coche con este ID")
 
@@ -97,6 +98,25 @@ async def update_imagen_coche(
     tags=["imagenes-coche"],
     description="Eliminar una imagen de coche por ID"
 )
-def delete_imagenCoche(id: int):
+async def delete_imagenCoche(id: int):
     imagenEliminada = conn.execute(ImagenCoche.delete().where(ImagenCoche.c.id == id)).first()
     return imagenEliminada
+
+@imagenCoche.get(
+    "/imagenes-coche/imagen/{id}",
+    response_model=ImagenCocheBase,
+    tags=["imagenes-coche"],
+    description="Ver una imagen de coche por ID"
+)
+async def ver_imagenCoche(id: int):
+    try:
+        # Obtén la imagen de la base de datos por ID
+        imagen_coche = conn.execute(select(ImagenCoche).where(ImagenCoche.c.id == id)).first()
+
+        if not imagen_coche:
+            raise HTTPException(status_code=404, detail="Imagen de coche no encontrada")
+
+        # Retorna la imagen como respuesta
+        return StreamingResponse(io.BytesIO(imagen_coche.imagen), media_type="image/jpeg")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al cargar la imagen: {str(e)}")

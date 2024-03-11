@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from models.Coche import CajaCambiosEnum,CombustibleEnum,DistAmbientalEnum,TipoCarrEnum,ColorEnum
 
 class CocheBase(BaseModel):
+    id: int
     marca_id: int
     modelo: int
     precio: float
