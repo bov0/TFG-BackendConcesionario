@@ -1,3 +1,4 @@
+import string
 from fastapi import APIRouter, HTTPException, UploadFile, Form
 from sqlalchemy import select
 from models.Usuario import Usuario
@@ -40,6 +41,18 @@ def get_usuario(id : int):
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario
 
+@usuario.get(
+    "/usuarios/email/{email}",
+    response_model=UsuarioBase,
+    tags=["usuarios"],
+    description="Ver usuario por email"
+)
+def get_usuario(email: str):
+    usuario = conn.execute(select(Usuario).where(Usuario.c.Email == email)).first()
+    if usuario is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return usuario
+
 @usuario.post(
     "/usuarios",
     response_model=str,
@@ -49,7 +62,11 @@ async def create_usuario(
     nombre: str = Form(..., title="Nombre", description="Nombre del usuario"),
     apellidos: str = Form(..., title="Apellidos", description="Apellidos del usuario"),
     Email: str = Form(..., title="Email", description="Email del usuario"),
+<<<<<<< HEAD
     contrasena: str = Form(...,title="Contrasena", description="Contrasena del usuario"),
+=======
+    contrasena: str = Form(..., title="Contraseña", description="Contraseña del usuario"),
+>>>>>>> f599ebe616fc8becf1ae51f3068eb0dc0a3db057
     fotoPerfil: UploadFile = None  # Eliminar la restricción Form(...) para hacer que fotoPerfil sea opcional
 ):
     # Verificar si ya existe un usuario con el mismo email
@@ -84,6 +101,7 @@ async def update_usuario(
     nombre: str = Form(..., title="Nombre", description="Nombre del usuario"),
     apellidos: str = Form(..., title="Apellidos", description="Apellidos del usuario"),
     Email: str = Form(..., title="Email", description="Email del usuario"),
+    contrasena: str = Form(..., title="Contraseña", description="Contraseña del usuario"),
     fotoPerfil: UploadFile = None  # Eliminar la restricción Form(...) para hacer que fotoPerfil sea opcional
 ):
 
@@ -97,7 +115,7 @@ async def update_usuario(
     if fotoPerfil:
         foto_perfil_blob = await fotoPerfil.read()
     
-    UsuarioActualizado = conn.execute(Usuario.update().values(nombre=nombre,apellidos=apellidos,Email=Email,fotoPerfil=foto_perfil_blob).where(Usuario.c.id == id))
+    UsuarioActualizado = conn.execute(Usuario.update().values(nombre=nombre,apellidos=apellidos,Email=Email,contrasena=contrasena,fotoPerfil=foto_perfil_blob).where(Usuario.c.id == id))
     
     if UsuarioActualizado is None:
         return f"error"
