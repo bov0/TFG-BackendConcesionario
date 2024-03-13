@@ -8,6 +8,7 @@ Usuario = Table('Usuario',
     Column('nombre',String(255), nullable=False),
     Column('apellidos',String(255), nullable=False),
     Column('Email',String(255), nullable=False),
+    Column('contrasena',String(255), nullable=False),
     Column('fotoPerfil',BLOB, nullable=False),
     )
 

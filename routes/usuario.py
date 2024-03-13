@@ -18,7 +18,16 @@ usuario = APIRouter()
 def get_usuarios():
     return conn.execute(select(Usuario)).fetchall()
     
-
+@usuario.get(
+            "/usuarios/{nombre}",
+            response_model=UsuarioBase,
+            tags=["usuarios"],
+            description="Ver usuario por nombre único")
+def get_usuario(nombre : str):
+    usuario = conn.execute(select(Usuario).where(Usuario.c.nombre == nombre)).first()
+    if usuario is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return usuario
 
 @usuario.get(
             "/usuarios/{id}",
@@ -40,6 +49,7 @@ async def create_usuario(
     nombre: str = Form(..., title="Nombre", description="Nombre del usuario"),
     apellidos: str = Form(..., title="Apellidos", description="Apellidos del usuario"),
     Email: str = Form(..., title="Email", description="Email del usuario"),
+    contrasena: str = Form(...,title="Contrasena", description="Contrasena del usuario"),
     fotoPerfil: UploadFile = None  # Eliminar la restricción Form(...) para hacer que fotoPerfil sea opcional
 ):
     # Verificar si ya existe un usuario con el mismo email
@@ -56,6 +66,7 @@ async def create_usuario(
         "nombre": nombre,
         "apellidos": apellidos,
         "Email": Email,
+        "contrasena": contrasena,
         "fotoPerfil": foto_perfil_blob
     }
 

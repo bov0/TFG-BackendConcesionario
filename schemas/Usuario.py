@@ -6,6 +6,7 @@ class UsuarioBase(BaseModel):
     nombre: str
     apellidos: str
     Email: str
+    contrasena: str
     fotoPerfil: Optional[bytes] = None
 
     class Config:
