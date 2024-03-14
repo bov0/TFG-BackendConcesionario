@@ -39,10 +39,10 @@ deactivate nondestructive
 if [ "$OSTYPE" = "cygwin" ] || [ "$OSTYPE" = "msys" ] ; then
     # transform D:\path\to\venv to /d/path/to/venv on MSYS
     # and to /cygdrive/d/path/to/venv on Cygwin
-    export VIRTUAL_ENV=$(cygpath "E:\Javascript\TFG-Backend\venv")
+    export VIRTUAL_ENV=$(cygpath "C:\Users\ibay2\OneDrive\Documentos\DAW2\TFG-BackendConcesionario\venv")
 else
     # use the path as-is
-    export VIRTUAL_ENV="E:\Javascript\TFG-Backend\venv"
+    export VIRTUAL_ENV="C:\Users\ibay2\OneDrive\Documentos\DAW2\TFG-BackendConcesionario\venv"
 fi
 
 _OLD_VIRTUAL_PATH="$PATH"

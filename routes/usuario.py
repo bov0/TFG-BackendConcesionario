@@ -1,12 +1,11 @@
-import string
 from fastapi import APIRouter, HTTPException, UploadFile, Form
+from fastapi.responses import StreamingResponse
 from sqlalchemy import select
 from models.Usuario import Usuario
 from schemas.Usuario import UsuarioBase
 from config.db import conn
+import io
 from starlette.status import HTTP_204_NO_CONTENT
-
-from werkzeug.utils import secure_filename
 
 usuario = APIRouter()
 
@@ -18,17 +17,6 @@ usuario = APIRouter()
 )
 def get_usuarios():
     return conn.execute(select(Usuario)).fetchall()
-    
-@usuario.get(
-            "/usuarios/{nombre}",
-            response_model=UsuarioBase,
-            tags=["usuarios"],
-            description="Ver usuario por nombre único")
-def get_usuario(nombre : str):
-    usuario = conn.execute(select(Usuario).where(Usuario.c.nombre == nombre)).first()
-    if usuario is None:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return usuario
 
 @usuario.get(
             "/usuarios/{id}",
@@ -37,6 +25,17 @@ def get_usuario(nombre : str):
             description="Ver usuario por ID único")
 def get_usuario(id : int):
     usuario = conn.execute(select(Usuario).where(Usuario.c.id == id)).first()
+    if usuario is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return usuario
+    
+@usuario.get(
+            "/usuarios/nombre/{nombre}",
+            response_model=UsuarioBase,
+            tags=["usuarios"],
+            description="Ver usuario por nombre único")
+def get_usuario(nombre : str):
+    usuario = conn.execute(select(Usuario).where(Usuario.c.nombre == nombre)).first()
     if usuario is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario
@@ -129,3 +128,22 @@ def delete_usuario(id: int):
     
     conn.execute(Usuario.delete().where(Usuario.c.id == id))
     return "Usuario eliminado"
+
+@usuario.get(
+    "/imagen/{id}",
+    response_model=UsuarioBase,
+    tags=["usuarios"],
+    description="Ver una imagen de usuario por ID del usuario"
+)
+async def ver_imagenUsuario(id: int):
+    try:
+        # Obtén la imagen de la base de datos por ID
+        imagenUsuario = conn.execute(select(Usuario).where(Usuario.c.id == id)).first()
+
+        if not imagenUsuario:
+            raise HTTPException(status_code=404, detail="Imagen de usuario no encontrada")
+
+        # Retorna la imagen como respuesta
+        return StreamingResponse(io.BytesIO(imagenUsuario.fotoPerfil), media_type="image/jpeg")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al cargar la imagen: {str(e)}")
