@@ -62,11 +62,7 @@ async def create_usuario(
     nombre: str = Form(..., title="Nombre", description="Nombre del usuario"),
     apellidos: str = Form(..., title="Apellidos", description="Apellidos del usuario"),
     Email: str = Form(..., title="Email", description="Email del usuario"),
-<<<<<<< HEAD
     contrasena: str = Form(...,title="Contrasena", description="Contrasena del usuario"),
-=======
-    contrasena: str = Form(..., title="Contraseña", description="Contraseña del usuario"),
->>>>>>> f599ebe616fc8becf1ae51f3068eb0dc0a3db057
     fotoPerfil: UploadFile = None  # Eliminar la restricción Form(...) para hacer que fotoPerfil sea opcional
 ):
     # Verificar si ya existe un usuario con el mismo email
