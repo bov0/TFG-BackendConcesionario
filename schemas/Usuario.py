@@ -3,6 +3,7 @@ from typing import Optional
 import base64
 
 class UsuarioBase(BaseModel):
+    id : int
     nombre: str
     apellidos: str
     Email: str

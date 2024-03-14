@@ -9,7 +9,7 @@ Usuario = Table('Usuario',
     Column('apellidos',String(255), nullable=False),
     Column('Email',String(255), nullable=False),
     Column('contrasena',String(255), nullable=False),
-    Column('fotoPerfil',BLOB, nullable=False),
+    Column('fotoPerfil',BLOB, nullable=True),
     )
 
 meta.create_all(bind=engine,tables=[Usuario])
