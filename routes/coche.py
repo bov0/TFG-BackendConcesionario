@@ -1,3 +1,4 @@
+from ast import For
 from fastapi import APIRouter, HTTPException, Form  
 from config.db import conn
 from models.Coche import Coche, CajaCambiosEnum,CombustibleEnum,ColorEnum,DistAmbientalEnum, TipoCarrEnum
@@ -20,7 +21,7 @@ async def get_coches():
     return conn.execute(select(Coche)).fetchall()
 
 @coche.get("/coches/{id}", tags=["coches"], response_model=CocheBase, description="Ver coche por ID único")
-def get_coche(id: int):
+async def get_coche(id: int):
     coche_resultado = conn.execute(select(Coche).where(Coche.c.id == id)).first()
     
     if coche_resultado is None:
@@ -40,7 +41,8 @@ async def create_coche(
     distAmbiental: str = Form(..., title="Distancia Ambiental", description="Clasificación de la distancia ambiental del coche"),
     cilindrada: int = Form(..., title="Cilindrada", description="Cilindrada del coche"),
     tipCarr: str = Form(..., title="Tipo de Carrocería", description="Tipo de carrocería del coche"),
-    color: str = Form(..., title="Color", description="Color del coche")
+    color: str = Form(..., title="Color", description="Color del coche"),
+    vendedor_id: int = Form(...,title="Vendedor", description="ID del vendedor")
 ):
     marcaExiste = conn.execute(select(MarcaCoche).where(MarcaCoche.c.id == marca_id)).first()
 
@@ -63,7 +65,8 @@ async def create_coche(
         "distAmbiental": distAmbiental,
         "cilindrada": cilindrada,
         "tipCarr": tipCarr,
-        "color": color
+        "color": color,
+        "vendedor_id" : vendedor_id
     }
 
     result = conn.execute(Coche.insert().values(new_coche))
@@ -85,7 +88,8 @@ async def update_coche(
     distAmbiental: str = Form(None, title="Distancia Ambiental", description="Clasificación de la distancia ambiental del coche"),
     cilindrada: int = Form(None, title="Cilindrada", description="Cilindrada del coche"),
     tipCarr: str = Form(None, title="Tipo de Carrocería", description="Tipo de carrocería del coche"),
-    color: str = Form(None, title="Color", description="Color del coche")
+    color: str = Form(None, title="Color", description="Color del coche"),
+    vendedor_id: int = Form(...,title="Vendedor", description="ID del vendedor")
 ):
     # Verificar si el coche con el ID proporcionado existe
     coche_existente = conn.execute(select(Coche).where(Coche.c.id == id)).first()

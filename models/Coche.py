@@ -50,6 +50,7 @@ Coche = Table(
     Column('cilindrada', Integer, nullable=False),
     Column('tipCarr', Enum(TipoCarrEnum), nullable=False),
     Column('color', Enum(ColorEnum), nullable=False),
+    Column('vendedor_id',Integer,ForeignKey('Usuario.id'), nullable=False)
 )
 
 meta.create_all(bind=engine, tables=[Coche])
