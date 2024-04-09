@@ -14,3 +14,4 @@ class CocheBase(BaseModel):
     cilindrada: int
     tipCarr: TipoCarrEnum
     color: ColorEnum
+    vendedor_id: int
