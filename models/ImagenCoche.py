@@ -7,7 +7,7 @@ ImagenCoche = Table(
     meta,
     Column('id',Integer, primary_key=True),
     Column('coche_id',Integer, ForeignKey('coches.id'), nullable=False),
-    Column('imagen',BLOB,nullable=False) 
+    Column('imagen',BLOB,nullable=False)
 )
 
 meta.create_all(bind=engine,tables=[ImagenCoche])

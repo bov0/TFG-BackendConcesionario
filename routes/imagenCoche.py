@@ -100,7 +100,7 @@ async def update_imagen_coche(
 )
 async def delete_imagenCoche(id: int):
     imagenEliminada = conn.execute(ImagenCoche.delete().where(ImagenCoche.c.id == id)).first()
-    return imagenEliminada
+    return "Imagen eliminada"
 
 @imagenCoche.get(
     "/imagenes-coche/imagen/{id}",
