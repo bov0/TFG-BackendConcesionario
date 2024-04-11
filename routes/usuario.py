@@ -65,7 +65,7 @@ async def create_usuario(
     fotoPerfil: UploadFile = None  # Eliminar la restricción Form(...) para hacer que fotoPerfil sea opcional
 ):
     # Verificar si ya existe un usuario con el mismo email
-    usuario_existente = conn.execute(select(Usuario).where(Usuario.c.id == id)).first()
+    usuario_existente = conn.execute(select(Usuario).where(Usuario.c.Email == Email)).first()
     if usuario_existente is not None:
         raise HTTPException(status_code=400, detail="Ya existe un usuario con este email")
 
@@ -89,33 +89,43 @@ async def create_usuario(
 
 @usuario.put("/usuarios/{id}",
              response_model=str,
-            tags=["usuarios"],
+             tags=["usuarios"],
              description="Modificar usuario por ID")
 async def update_usuario(
     id: int,
-    nombre: str = Form(..., title="Nombre", description="Nombre del usuario"),
-    apellidos: str = Form(..., title="Apellidos", description="Apellidos del usuario"),
-    Email: str = Form(..., title="Email", description="Email del usuario"),
-    contrasena: str = Form(..., title="Contraseña", description="Contraseña del usuario"),
-    fotoPerfil: UploadFile = None  # Eliminar la restricción Form(...) para hacer que fotoPerfil sea opcional
+    nombre: str = Form(None, title="Nombre", description="Nombre del usuario"),
+    apellidos: str = Form(None, title="Apellidos", description="Apellidos del usuario"),
+    Email: str = Form(None, title="Email", description="Email del usuario"),
+    contrasena: str = Form(None, title="Contraseña", description="Contraseña del usuario"),
+    fotoPerfil: UploadFile = Form(None, description="Foto de perfil del usuario")
 ):
-
     # Verificar si el usuario con el ID proporcionado existe
     usuario_existente = conn.execute(select(Usuario).where(Usuario.c.id == id)).first()
     if usuario_existente is None:
         raise HTTPException(status_code=404, detail="No existe ningún usuario con el ID proporcionado")
 
-    foto_perfil_blob = None
-    # Si se proporcionó una imagen, leer el archivo
-    if fotoPerfil:
+    # Construir el diccionario de valores a actualizar
+    valores_actualizados = {}
+    if nombre is not None:
+        valores_actualizados["nombre"] = nombre
+    if apellidos is not None:
+        valores_actualizados["apellidos"] = apellidos
+    if Email is not None:
+        valores_actualizados["Email"] = Email
+    if contrasena is not None:
+        valores_actualizados["contrasena"] = contrasena
+    if fotoPerfil is not None:
         foto_perfil_blob = await fotoPerfil.read()
-    
-    UsuarioActualizado = conn.execute(Usuario.update().values(nombre=nombre,apellidos=apellidos,Email=Email,contrasena=contrasena,fotoPerfil=foto_perfil_blob).where(Usuario.c.id == id))
-    
-    if UsuarioActualizado is None:
-        return f"error"
+        valores_actualizados["fotoPerfil"] = foto_perfil_blob
 
-    return f"Usuario {nombre} actualizado"
+    # Actualizar el usuario en la base de datos
+    UsuarioActualizado = conn.execute(Usuario.update().values(**valores_actualizados).where(Usuario.c.id == id))
+
+    if UsuarioActualizado is None:
+        return f"Error al actualizar el usuario"
+
+    return f"Usuario actualizado correctamente"
+
 
 @usuario.delete("/usuarios/{id}",
                tags=["usuarios"],
