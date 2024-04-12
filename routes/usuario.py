@@ -15,7 +15,7 @@ usuario = APIRouter()
     response_model=list[UsuarioBase],
     description="Lista de todos los usuarios"
 )
-def get_usuarios():
+async def get_usuarios():
     return conn.execute(select(Usuario)).fetchall()
 
 @usuario.get(
@@ -23,7 +23,7 @@ def get_usuarios():
             response_model=UsuarioBase,
             tags=["usuarios"],
             description="Ver usuario por ID único")
-def get_usuario(id : int):
+async def get_usuario(id : int):
     usuario = conn.execute(select(Usuario).where(Usuario.c.id == id)).first()
     if usuario is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
@@ -34,7 +34,7 @@ def get_usuario(id : int):
             response_model=UsuarioBase,
             tags=["usuarios"],
             description="Ver usuario por nombre único")
-def get_usuario(nombre : str):
+async def get_usuario(nombre : str):
     usuario = conn.execute(select(Usuario).where(Usuario.c.nombre == nombre)).first()
     if usuario is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
@@ -46,7 +46,7 @@ def get_usuario(nombre : str):
     tags=["usuarios"],
     description="Ver usuario por email"
 )
-def get_usuario(email: str):
+async def get_usuario(email: str):
     usuario = conn.execute(select(Usuario).where(Usuario.c.Email == email)).first()
     if usuario is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
@@ -130,7 +130,7 @@ async def update_usuario(
 @usuario.delete("/usuarios/{id}",
                tags=["usuarios"],
                description="Eliminar un usuario por ID")
-def delete_usuario(id: int):
+async def delete_usuario(id: int):
     delete_resultado = conn.execute(select(Usuario).where(Usuario.c.id == id)).first()
     
     if delete_resultado is None:
@@ -140,7 +140,7 @@ def delete_usuario(id: int):
     return "Usuario eliminado"
 
 @usuario.get(
-    "/imagen/{id}",
+    "/usuarios/imagen/{id}",
     response_model=UsuarioBase,
     tags=["usuarios"],
     description="Ver una imagen de usuario por ID del usuario"

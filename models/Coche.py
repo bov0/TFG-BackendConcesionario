@@ -27,11 +27,13 @@ class TipoCarrEnum(PythonEnum):
     Coupe = "Coupe"
     SUV = "SUV"
     Camioneta = "Camioneta"
+    Todoterreno = "Todoterreno"
 
 class ColorEnum(PythonEnum):
     Rojo = "Rojo"
     Azul = "Azul"
     Amarillo = "Amarillo"
+    Verde = "Verde"
     Negro = "Negro"
     Blanco = "Blanco"
 
