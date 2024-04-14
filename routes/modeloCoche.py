@@ -46,6 +46,18 @@ async def get_modeloById(id: int):
     
     return modelo_resultado
 
+@modeloCoche.get(
+    "/modelos/nombre/{nombreModelo}",
+    response_model=int,
+    tags=["modelos"],
+    description="Ver modelo de coche por Nombre único"
+)
+async def get_modeloByNombre(nombreModelo: str):
+    modelo_resultado = conn.execute(select(ModeloCoche.c.id).where(ModeloCoche.c.nombre == nombreModelo)).scalar()
+    if modelo_resultado is None:
+        raise HTTPException(status_code=404, detail="Marca de coche no encontrada")
+    return modelo_resultado
+
 @modeloCoche.post(
     "/modelos",
     tags=["modelos"],
