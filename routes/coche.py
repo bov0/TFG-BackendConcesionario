@@ -7,7 +7,7 @@ from models.ModeloCoche import ModeloCoche
 from schemas.Coche import CocheBase
 from typing import List
 from starlette.status import HTTP_204_NO_CONTENT
-from sqlalchemy import select
+from sqlalchemy import select, desc
 
 coche = APIRouter()
 
@@ -28,6 +28,17 @@ async def get_coche(id: int):
         raise HTTPException(status_code=404, detail="No se encontró ningún coche con el ID proporcionado")
     
     return coche_resultado
+
+@coche.get(
+    "/lastCoche",
+    tags=["coches"],
+    response_model=CocheBase,
+    description="Lista de todos los coches"
+)
+async def get_last_coche():
+    latest_car = conn.execute(select(Coche).order_by(desc(Coche.c.id))).first()
+    return latest_car
+    
 
 @coche.post("/coches", tags=["coches"], response_model=CocheBase, description="Crear un nuevo coche")
 async def create_coche(

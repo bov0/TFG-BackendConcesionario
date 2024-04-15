@@ -5,9 +5,13 @@ from models.Usuario import Usuario
 from schemas.Usuario import UsuarioBase
 from config.db import conn
 import io
+import os
 from starlette.status import HTTP_204_NO_CONTENT
 
 usuario = APIRouter()
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+default_image_path = os.path.join(current_dir, "..", "img", "defaultUserIcon.jpg")
 
 @usuario.get(
     "/usuarios",
@@ -73,6 +77,13 @@ async def create_usuario(
     # Si se proporcionó una imagen, leer el archivo
     if fotoPerfil:
         foto_perfil_blob = await fotoPerfil.read()
+    else:
+    # Si no se proporciona una imagen, abrir la imagen predeterminada
+        try:
+            with open(default_image_path, "rb") as default_image_file:
+                foto_perfil_blob = default_image_file.read()
+        except FileNotFoundError:
+            raise HTTPException(status_code=500, detail="No se pudo encontrar la imagen predeterminada")
 
     nuevoUsuario = {
         "nombre": nombre,
