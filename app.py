@@ -4,6 +4,8 @@ from routes.marcaCoche import marcaCoche
 from routes.imagenCoche import imagenCoche
 from routes.usuario import usuario
 from routes.modeloCoche import modeloCoche
+from routes.ventas import ventas
+from routes.cochesVendidos import cocheVendido
 from config.openapi import tags_metadata
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -27,3 +29,5 @@ app.include_router(marcaCoche)
 app.include_router(imagenCoche)
 app.include_router(usuario)
 app.include_router(modeloCoche)
+app.include_router(ventas)
+app.include_router(cocheVendido)
