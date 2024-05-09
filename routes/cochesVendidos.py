@@ -30,6 +30,7 @@ async def get_coche(id: int):
 
 @cocheVendido.post("/cochesVendidos", tags=["cochesVendidos"], response_model=CocheVendidoBase, description="Crear un nuevo coche")
 async def create_coche(
+    id: int = Form(..., title="ID del coche Vendido", description="ID del coche Vendido"),
     marca_id: int = Form(..., title="ID de la Marca", description="ID de la marca del coche"),
     modelo: str = Form(..., title="Modelo", description="ID del modelo del coche"),
     precio: float = Form(..., title="Precio", description="Precio del coche"),
@@ -54,6 +55,7 @@ async def create_coche(
         raise HTTPException(status_code=404, detail="No existe ningun modelo de coche con el ID proporcionado")
     
     new_coche = {
+        "id": id,
         "marca_id": marca_id,
         "modelo": modelo,
         "precio": precio,

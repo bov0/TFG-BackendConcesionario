@@ -27,8 +27,8 @@ async def get_coche(id: int):
     
     return coche_resultado  
 
-@ventas.post("/ventas", tags=["ventas"], response_model=VentasBase, description="Crear un nuevo coche")
-async def create_coche(
+@ventas.post("/ventas", tags=["ventas"], response_model=VentasBase, description="Crear una venta")
+async def create_venta(
     coche_id: int = Form(..., title="ID de la Marca", description="ID de la marca del coche"),
     comprador_id: int = Form(..., title="ID del comprador", description="ID del comprador"),
 ):
