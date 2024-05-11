@@ -102,6 +102,16 @@ async def delete_imagenCoche(id: int):
     imagenEliminada = conn.execute(ImagenCoche.delete().where(ImagenCoche.c.id == id)).first()
     return "Imagen eliminada"
 
+@imagenCoche.delete(
+    "/imagenes-coche/byCar/{id}",
+    response_model=ImagenCocheBase,
+    tags=["imagenes-coche"],
+    description="Eliminar una imagen de coche por ID de coche"
+)
+async def delete_imagenCoche_ByIdCoche(id: int):
+    imagenEliminada = conn.execute(ImagenCoche.delete().where(ImagenCoche.c.coche_id == id)).first()
+    return "Imagen eliminada"
+
 @imagenCoche.get(
     "/imagenes-coche/imagen/{id}",
     response_model=ImagenCocheBase,
