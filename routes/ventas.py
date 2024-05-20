@@ -27,27 +27,6 @@ async def get_venta(id: int):
         raise HTTPException(status_code=404, detail="No se encontró ninguna ventas con el ID proporcionado")
     
     return coche_resultado
-
-@ventas.get(
-    "/coches-comprados/{comprador_id}",
-    tags=["ventas"],
-    response_model=List[CocheBase],
-    description="Obtener todos los coches comprados por un comprador basado en su ID",
-)
-async def obtener_coches_comprados(comprador_id: int):
-    try:
-        # Realiza el join entre Ventas y Coche para obtener coches comprados
-        join_ventas_coches = join(Ventas, Coche, Ventas.coche_id == Coche.id)
-
-        coche_resultado = conn.execute(select(Coche).where(Coche.c.id == comprador_id)).fetchall()
-        
-        return coche_resultado
-
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error al obtener los coches comprados: {str(e)}",
-        )
     
 @ventas.post("/ventas", tags=["ventas"], response_model=VentasBase, description="Crear una venta")
 async def create_venta(
@@ -64,7 +43,14 @@ async def create_venta(
     new_venta["id"] = result.lastrowid
     return new_venta
 
-from fastapi import HTTPException
+@ventas.get("/ventasComprador/{comprador_id}", tags=["ventas"], response_model=VentasBase, description="Ver ventas por ID del comprador")
+async def get_venta(comprador_id: int):
+    coche_resultado = conn.execute(select(Ventas).where(Ventas.c.comprador_id == comprador_id)).fetchall()
+    
+    if coche_resultado is None:
+        raise HTTPException(status_code=404, detail="No se encontró ninguna ventas con el ID proporcionado")
+    
+    return coche_resultado
 
 @ventas.delete("/ventas/{id}", tags=["ventas"], status_code=HTTP_204_NO_CONTENT)
 def delete_venta(id: int):
