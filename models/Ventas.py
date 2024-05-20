@@ -6,7 +6,7 @@ Ventas = Table(
     'Ventas',
     meta,
     Column('id',Integer, primary_key=True),
-    Column('coche_id',Integer, ForeignKey('coches.id'), nullable=False),
+    Column('coche_id',Integer, ForeignKey('cochesVendidos.id'), nullable=False),
     Column('comprador_id',Integer,ForeignKey('Usuario.id'),nullable=False),
 )
 
