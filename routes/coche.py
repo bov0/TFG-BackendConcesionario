@@ -123,10 +123,10 @@ async def update_coche(
     # Devolver el coche actualizado como un diccionario
     return conn.execute(select(Coche).where(Coche.c.id == id)).first()._asdict()
 
-@coche.delete("/coches/{id}", tags=["coches"], status_code=HTTP_204_NO_CONTENT)
+@coche.delete("/coches/{id}", tags=["coches"], description="Eliminar un coche por ID de coche")
 async def delete_coche(id: int):
     conn.execute(Coche.delete().where(Coche.c.id == id))
-    return conn.execute(select(Coche).where(Coche.c.id == id)).first()
+    return "Coche eliminado"
 
 @coche.get("/opcionesCajaCambios", tags=["enums"], response_model=List[str], description="Obtener opciones de caja de cambios")
 def get_opciones_caja_cambios():

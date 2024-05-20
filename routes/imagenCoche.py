@@ -104,7 +104,6 @@ async def delete_imagenCoche(id: int):
 
 @imagenCoche.delete(
     "/imagenes-coche/byCar/{id}",
-    response_model=ImagenCocheBase,
     tags=["imagenes-coche"],
     description="Eliminar una imagen de coche por ID de coche"
 )
