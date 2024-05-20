@@ -27,6 +27,15 @@ async def get_venta(id: int):
         raise HTTPException(status_code=404, detail="No se encontró ninguna ventas con el ID proporcionado")
     
     return coche_resultado
+
+@ventas.get("/compras/{id_comprador}", tags=["compras"], response_model=List[VentasBase], description="Ver venta por ID único")
+async def get_venta(id_comprador: int):
+    coches_resultado = conn.execute(select(Ventas).where(Ventas.c.comprador_id == id_comprador)).fetchall()
+    
+    if coches_resultado is None:
+        raise HTTPException(status_code=404, detail="No se encontró ninguna ventas con el ID proporcionado")
+    
+    return coches_resultado
     
 @ventas.post("/ventas", tags=["ventas"], response_model=VentasBase, description="Crear una venta")
 async def create_venta(
