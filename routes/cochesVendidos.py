@@ -6,7 +6,7 @@ from models.ModeloCoche import ModeloCoche
 from schemas.CochesVendidos import CocheVendidoBase
 from typing import List
 from starlette.status import HTTP_204_NO_CONTENT
-from sqlalchemy import select
+from sqlalchemy import null, select
 
 cocheVendido = APIRouter()
 
@@ -80,3 +80,25 @@ from fastapi import HTTPException
 def delete_coche(id: int):
     conn.execute(CochesVendidos.delete().where(CochesVendidos.c.id == id))
     return conn.execute(select(CochesVendidos).where(CochesVendidos.c.id == id)).first()
+
+@cocheVendido.get(
+    "/coches-vendidos/{vendedor_id}",
+    tags=["cochesVendidos"],
+    response_model=List[CocheVendidoBase],
+    description="Obtener todos los coches vendidos por un vendedor basado en su ID",
+)
+async def obtener_coches_comprados(vendedor_id: int):
+    try:
+
+        coche_resultado = conn.execute(select(CochesVendidos).where(CochesVendidos.c.vendedor_id == vendedor_id)).fetchall()
+        
+        if coche_resultado is None:
+            raise HTTPException(status_code=404, detail="No existe ningun coche vendido por el usuario con id " + vendedor_id)
+
+        return coche_resultado
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al obtener los coches comprados: {str(e)}",
+        )

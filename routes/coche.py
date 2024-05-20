@@ -124,7 +124,7 @@ async def update_coche(
     return conn.execute(select(Coche).where(Coche.c.id == id)).first()._asdict()
 
 @coche.delete("/coches/{id}", tags=["coches"], status_code=HTTP_204_NO_CONTENT)
-def delete_coche(id: int):
+async def delete_coche(id: int):
     conn.execute(Coche.delete().where(Coche.c.id == id))
     return conn.execute(select(Coche).where(Coche.c.id == id)).first()
 

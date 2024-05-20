@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Table, ForeignKey, false
-from sqlalchemy.sql.sqltypes import Integer, BLOB
+from sqlalchemy import Column, Table, ForeignKey
+from sqlalchemy.sql.sqltypes import Integer
 from config.db import meta, engine
 
 Ventas = Table(
