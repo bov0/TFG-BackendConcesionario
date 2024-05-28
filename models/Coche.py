@@ -36,6 +36,8 @@ class ColorEnum(PythonEnum):
     Verde = "Verde"
     Negro = "Negro"
     Blanco = "Blanco"
+    Gris = "Gris"
+    Naranja = "Naranja"
 
 Coche = Table(
     'coches',
