@@ -1,4 +1,3 @@
-from ast import For
 from fastapi import APIRouter, HTTPException, Form  
 from config.db import conn
 from models.Coche import Coche, CajaCambiosEnum,CombustibleEnum,ColorEnum,DistAmbientalEnum, TipoCarrEnum
@@ -18,7 +17,8 @@ coche = APIRouter()
     description="Lista de todos los coches",
 )
 async def get_coches():
-    return conn.execute(select(Coche)).fetchall()
+    result = conn.execute(select(Coche)).fetchall()
+    return [row._asdict() for row in result]
 
 @coche.get("/coches/{id}", tags=["coches"], response_model=CocheBase, description="Ver coche por ID único")
 async def get_coche(id: int):

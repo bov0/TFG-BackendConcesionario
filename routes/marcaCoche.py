@@ -49,19 +49,6 @@ async def get_marca_coche_nombre(nombreMarca: str):
     description="Crear una nueva marca de coche"
 )
 
-#def create_marca_coche(marcaCoche_data: MarcaCocheBase):
-    # Verificar si ya existe una marca de coche con el mismo nombre
-    #marca_existente = conn.execute(select(MarcaCocheBase).where(MarcaCocheBase.nombreMarca == marcaCoche_data.nombreMarca)).first()
-    #if marca_existente:
-        #raise HTTPException(status_code=400, detail="Ya existe una marca de coche con este nombre")
-
-    #nuevaMarcaCoche = {
-       # "nombreMarca": marcaCoche_data.nombreMarca
-    #}
-
-    #result = conn.execute(MarcaCocheBase.insert().values(nuevaMarcaCoche))
-    #nuevaMarcaCoche["id"] = result.lastrowid
-    #return nuevaMarcaCoche
 async def create_marca_coche(
     nombreMarca: str = Form(..., tittle="Nombre", description="Nombre de la marca")
 ):
