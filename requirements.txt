@@ -7,7 +7,6 @@ greenlet==3.0.3
 h11==0.14.0
 idna==3.6
 MarkupSafe==2.1.5
-mysqlclient==2.2.4
 pillow==10.2.0
 pydantic==2.6.3
 pydantic_core==2.16.3
