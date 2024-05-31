@@ -62,6 +62,6 @@ async def get_venta(comprador_id: int):
     return coche_resultado
 
 @ventas.delete("/ventas/{id}", tags=["ventas"], status_code=HTTP_204_NO_CONTENT)
-def delete_venta(id: int):
+async def delete_venta(id: int):
     conn.execute(Ventas.delete().where(Ventas.c.id == id))
     return conn.execute(select(Ventas).where(Ventas.c.id == id)).first()

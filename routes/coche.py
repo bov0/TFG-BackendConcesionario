@@ -129,21 +129,21 @@ async def delete_coche(id: int):
     return "Coche eliminado"
 
 @coche.get("/opcionesCajaCambios", tags=["enums"], response_model=List[str], description="Obtener opciones de caja de cambios")
-def get_opciones_caja_cambios():
+async def get_opciones_caja_cambios():
     return [caja.value for caja in CajaCambiosEnum]
 
 @coche.get("/opcionesCombustible", tags=["enums"], response_model=List[str], description="Obtener opciones de combustible")
-def get_opciones_combustible():
+async def get_opciones_combustible():
     return [combustible.value for combustible in CombustibleEnum]
 
 @coche.get("/opcionesDistAmbiental", tags=["enums"], response_model=List[str], description="Obtener opciones de distancia ambiental")
-def get_opciones_dist_ambiental():
+async def get_opciones_dist_ambiental():
     return [dist_ambiental.value for dist_ambiental in DistAmbientalEnum]
 
 @coche.get("/opcionesTipoCarr", tags=["enums"], response_model=List[str], description="Obtener opciones de tipo de carrocería")
-def get_opciones_tipo_carr():
+async def get_opciones_tipo_carr():
     return [tipo_carr.value for tipo_carr in TipoCarrEnum]
 
 @coche.get("/opcionesColor", tags=["enums"], response_model=List[str], description="Obtener opciones de color")
-def get_opciones_color():
+async def get_opciones_color():
     return [color.value for color in ColorEnum]

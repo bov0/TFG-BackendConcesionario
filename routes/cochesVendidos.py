@@ -77,7 +77,7 @@ async def create_coche(
 from fastapi import HTTPException
 
 @cocheVendido.delete("/cochesVendidos/{id}", tags=["cochesVendidos"], status_code=HTTP_204_NO_CONTENT)
-def delete_coche(id: int):
+async def delete_coche(id: int):
     conn.execute(CochesVendidos.delete().where(CochesVendidos.c.id == id))
     return conn.execute(select(CochesVendidos).where(CochesVendidos.c.id == id)).first()
 
