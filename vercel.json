@@ -1,15 +1,15 @@
 {
-    "version": 2,
     "builds": [
-        {
-            "src": "*.py",
-            "use": "@vercel/python"
-        }
-    ],
-    "routes": [
-        {
-            "src": "(.*)",
-            "dest": "app.py"
-        }
-    ]
+    {
+        "src": "*.py",
+        "use": "@vercel/python",
+        "config": { "maxLamdaSize": "15mb" }
+    }
+],
+"routes": [
+    {
+        "src": "/(.*)",
+        "dest": "app.py"
+    }
+]
 }
