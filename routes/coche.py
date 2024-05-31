@@ -84,8 +84,6 @@ async def create_coche(
     new_coche["id"] = result.lastrowid
     return new_coche
 
-from fastapi import HTTPException
-
 @coche.put("/coches/{id}", tags=["coches"], response_model=dict, description="Modificar coche por ID")
 async def update_coche(
     id: int,
